@@ -1,2 +1,2 @@
 # tSQLt.Helper_
-Helpers for tSQLtframework.
+Helpers for tSQLt framework.
