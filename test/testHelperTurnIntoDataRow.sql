@@ -1,14 +1,23 @@
-drop procedure tSQLt.testHelperTurnIntoDataRow;
-go
-drop table stt.invoice;
-go
-drop schema stt;
-go
-drop table ##rows;
+-- Invoke-Sqlcmd -ServerInstance localhost -Username sa -Password StrongP@ssw0rd! -Verbose -InputFile ./test/testHelperTurnIntoDataRow.sql
+
+if not exists (select 1 from sys.schemas where name = 'stt')
+begin
+	exec('create schema stt;');
+end
 go
 
-create schema stt;
+if object_id('stt.invoice') is not null
+begin
+    drop table stt.invoice;
+end
 go
+
+if not exists (select 1 from sys.objects where type = 'P' and object_id = object_id('tSQLt.testHelperTurnIntoDataRow'))
+begin
+	exec('create procedure tSQLt.testHelperTurnIntoDataRow as begin set nocount on; end')
+end
+go
+
 create table stt.invoice
 (
     inv_id int not null,
@@ -18,7 +27,8 @@ create table stt.invoice
     inv_error nvarchar(max) null
 );
 go
-create procedure tSQLt.testHelperTurnIntoDataRow
+
+alter procedure tSQLt.testHelperTurnIntoDataRow
 as
 begin
 --- Arrange
@@ -43,7 +53,8 @@ begin
     (3, ''FV2'', ''qwerty asdfgh zxcvb'', 1234.56,                 ''?''),
     (4, ''A  '',          ''ABCDE12345'',    0.00, ''An error occurred'');';
 
-    print @actual
+    set @expected = replace(@expected, char(13) + char(10), char(10));
+    set @actual = replace(@actual, char(13) + char(10), char(10));
 
 	if not((@expected = @actual) or (@actual is null and @expected is null))
     begin

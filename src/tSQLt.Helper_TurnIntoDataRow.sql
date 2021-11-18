@@ -1,17 +1,25 @@
 -- docker run -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=StrongP@ssw0rd!' -p 1433:1433 -d mcr.microsoft.com/azure-sql-edge
+-- Invoke-Sqlcmd -ServerInstance localhost -Username sa -Password StrongP@ssw0rd! -Verbose -InputFile ./src/tSQLt.Helper_TurnIntoDataRow.sql
 
-drop procedure tSQLt.testHelperTurnIntoDataRow;
-go
-drop procedure tSQLt.Helper_TurnIntoDataRow;
-go
-drop procedure tSQLt.Private_FormatCell;
-go
-drop schema tSQLt;
+if not exists (select 1 from sys.schemas where name = 'tSQLt')
+begin
+	exec('create schema tSQLt;');
+end
 go
 
-create schema tSQLt;
+if not exists (select 1 from sys.objects where type = 'P' and object_id = object_id('tSQLt.Helper_TurnIntoDataRow'))
+begin
+	exec('create procedure tSQLt.Helper_TurnIntoDataRow as begin set nocount on; end')
+end
 go
-create procedure tSQLt.Private_FormatCell
+
+if not exists (select 1 from sys.objects where type = 'P' and object_id = object_id('tSQLt.Private_FormatCell'))
+begin
+	exec('create procedure tSQLt.Private_FormatCell as begin set nocount on; end')
+end
+go
+
+alter procedure tSQLt.Private_FormatCell
 (
 	@RowNumber int,
 	@ColumnNumber int,
@@ -37,7 +45,7 @@ begin
 		set @command = 'select @Result = convert(nvarchar(max), ' + @colName + ', 121) from #rows where RowNumber = ' + CONVERT(nvarchar(max), @RowNumber);
 	end
 
-	declare @params nvarchar(max) = N'@Result nvarchar(max) output'; 
+	declare @params nvarchar(max) = N'@Result nvarchar(max) output';
 	exec sp_executesql @command, @params, @Result = @Result OUTPUT;
 
 	if @isQuoted = 1
@@ -51,7 +59,7 @@ begin
 	end
 end;
 go
-create procedure tSQLt.Helper_TurnIntoDataRow
+alter procedure tSQLt.Helper_TurnIntoDataRow
 (
 	@TableName nvarchar(max),
 	@Query nvarchar(max),
