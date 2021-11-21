@@ -1,13 +1,9 @@
 name: Unit tests
 
 on:
-  pull_request:
   push:
     branches:
     - main
-    paths:
-    - '*'
-    - '!/docs/*'
 
 jobs:
   build:
@@ -23,9 +19,14 @@ jobs:
           SA_PASSWORD: "StrongP@ssw0rd!"
     steps:
       - uses: actions/checkout@master
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@master
-        with:
-          dotnet-version: '6.0'
+      - name: Install-Module SqlServer
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module -Name SqlServer
+      - name: Create objects
+        shell: pwsh
+        run: Invoke-SqlCmd -ServerInstance "localhost,${{ job.services.sqlserver.ports[1433] }}" -Database "master" -username "sa" -Password "StrongP@ssw0rd!" -ConnectionTimeout 30 -InputFile "./src/tSQLt.Helper_TurnIntoDataRow.sql"
       - name: Run unit tests
-        run: Invoke-SQlCmd -ServerInstance "localhost,1433" -Database "master"" -username "sa"" -Password "StrongP@ssw0rd!" -InputFile "./src/tSQLt.Helper_TurnIntoDataRow.sql" -ConnectionTieout 120
+        shell: pwsh
+        run: Invoke-SqlCmd -ServerInstance "localhost,${{ job.services.sqlserver.ports[1433] }}" -Database "master" -username "sa" -Password "StrongP@ssw0rd!" -ConnectionTimeout 30 -InputFile "./test/testHelperTurnIntoDataRow.sql"
