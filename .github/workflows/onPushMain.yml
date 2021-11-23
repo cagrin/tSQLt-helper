@@ -23,15 +23,15 @@ jobs:
         uses: actions/setup-dotnet@master
         with:
           dotnet-version: '6.0'
+      - name: Build tests
+        run: dotnet build Tests
+      - name: Publish tests
+        run: dotnet publish Tests /p:TargetDatabaseName=Tests /p:TargetUser=sa /p:TargetPassword=StrongP@ssw0rd! /p:TargetPort=${{ job.services.sqlserver.ports[1433] }}
       - name: Install-Module SqlServer
         shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module -Name SqlServer
-      - name: Build tests
-        run: dotnet build Tests
-      - name: Publish tests
-        run: dotnet publish Tests /p:TargetDatabaseName=Tests /p:TargetUser=sa /p:TargetPassword=StrongP@ssw0rd! /p:TargetPort=${{ job.services.sqlserver.ports[1433] }}
       - name: Run unit tests
         shell: pwsh
         run: Invoke-SqlCmd -ServerInstance "localhost,${{ job.services.sqlserver.ports[1433] }}" -Database "Tests" -username "sa" -Password "StrongP@ssw0rd!" -ConnectionTimeout 30 -Query "exec tSQLt.testHelperTurnIntoDataRow”
