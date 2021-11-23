@@ -24,9 +24,10 @@ jobs:
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module -Name SqlServer
-      - name: Create objects
-        shell: pwsh
-        run: Invoke-SqlCmd -ServerInstance "localhost,${{ job.services.sqlserver.ports[1433] }}" -Database "master" -username "sa" -Password "StrongP@ssw0rd!" -ConnectionTimeout 30 -InputFile "./src/tSQLt.Helper_TurnIntoDataRow.sql"
+      - name: Build tests
+        run: dotnet build Tests
+      - name: Publish tests
+        run: dotnet publish Tests /p:TargetDatabaseName=Tests /p:TargetUser=sa /p:TargetPassword=StrongP@ssw0rd! /p:TargetPort=${{ job.services.sqlserver.ports[1433] }}
       - name: Run unit tests
         shell: pwsh
-        run: Invoke-SqlCmd -ServerInstance "localhost,${{ job.services.sqlserver.ports[1433] }}" -Database "master" -username "sa" -Password "StrongP@ssw0rd!" -ConnectionTimeout 30 -InputFile "./test/testHelperTurnIntoDataRow.sql"
+        run: Invoke-SqlCmd -ServerInstance "localhost,${{ job.services.sqlserver.ports[1433] }}" -Database "Tests" -username "sa" -Password "StrongP@ssw0rd!" -ConnectionTimeout 30 -Query "exec tSQLt.testHelperTurnIntoDataRow”
