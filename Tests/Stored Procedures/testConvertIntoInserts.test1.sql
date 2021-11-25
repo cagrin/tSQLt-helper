@@ -1,4 +1,4 @@
-create procedure tSQLt.testHelperTurnIntoDataRow
+create procedure testConvertIntoInserts.test1
 as
 begin
 --- Arrange
@@ -11,7 +11,7 @@ begin
 --- Act
 	declare @actual nvarchar(max);
 
-	exec tSQLt.Helper_TurnIntoDataRow
+	exec tSQLtHelper.ConvertIntoInserts
 		@TableName = 'stt.invoice',
 		@Query = 'select inv_id, inv_type, inv_cust_id, inv_amount, inv_error from stt.invoice',
 		@Result = @actual output;
@@ -28,7 +28,7 @@ begin
 
 	if not((@expected = @actual) or (@actual is null and @expected is null))
     begin
-        raiserror('tSQLt.testHelperTurnIntoDataRow', 16, 10);
+        raiserror('testConvertIntoInserts.[test 1]', 16, 10);
     end
 
 end;

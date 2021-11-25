@@ -1,4 +1,4 @@
-create procedure tSQLt.Helper_TurnIntoDataRow
+create procedure tSQLtHelper.ConvertIntoInserts
 (
 	@TableName nvarchar(max),
 	@Query nvarchar(max),
@@ -40,7 +40,7 @@ begin
 		begin
 			set @idc = @idc + 1;
 			set @cell = '';
-			exec tSQLt.Private_FormatCell @idx, @idc, @cell output;
+			exec tSQLtHelper.Private_FormatCell @idx, @idc, @cell output;
 			update #cols set CHARACTER_MAXIMUM_LENGTH = len(@cell)
 			where ORDINAL_POSITION = @idc and CHARACTER_MAXIMUM_LENGTH < len(@cell);
 		end
@@ -60,7 +60,7 @@ begin
 			set @idc = @idc + 1;
 
 			set @cell = '';
-			exec tSQLt.Private_FormatCell @idx, @idc, @cell output;
+			exec tSQLtHelper.Private_FormatCell @idx, @idc, @cell output;
 
 			declare @colLength int = (select CHARACTER_MAXIMUM_LENGTH from #cols where ORDINAL_POSITION = @idc);
 

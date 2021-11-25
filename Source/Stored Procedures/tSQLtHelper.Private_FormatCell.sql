@@ -1,4 +1,4 @@
-create procedure tSQLt.Private_FormatCell
+create procedure tSQLtHelper.Private_FormatCell
 (
 	@RowNumber int,
 	@ColumnNumber int,

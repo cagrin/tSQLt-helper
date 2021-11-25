@@ -28,4 +28,4 @@ jobs:
       - name: Publish tests
         run: dotnet publish Tests /p:TargetDatabaseName=Tests /p:TargetUser=sa /p:TargetPassword=StrongP@ssw0rd! /p:TargetPort=${{ job.services.sqlserver.ports[1433] }}
       - name: Run unit tests
-        run: sqlcmd -S localhost,${{ job.services.sqlserver.ports[1433] }} -d Tests -U sa -P StrongP@ssw0rd! -t 30 -Q "exec tSQLt.testHelperTurnIntoDataRow"
+        run: sqlcmd -S localhost,${{ job.services.sqlserver.ports[1433] }} -d Tests -U sa -P StrongP@ssw0rd! -t 30 -Q "exec testConvertIntoInserts.test1"

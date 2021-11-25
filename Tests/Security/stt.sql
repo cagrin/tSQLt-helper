@@ -1,1 +1,2 @@
 create schema stt;
+go

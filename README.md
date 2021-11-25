@@ -1,15 +1,15 @@
-# tSQLt-helpers
+# tSQLtHelper
 Helpers for tSQLt framework.
 
 ## ConvertIntoInserts
 
-Procedure convert select query into inserts command.
+Procedure that converts "select query" into rows of inserts' command.
 
 Usage
 ```SQL
 declare @insertsCommand nvarchar(max);
 
-exec tSQLt-helpers.ConvertIntoInserts
+exec tSQLtHelper.ConvertIntoInserts
     @TableName = 'stt.invoice',
     @Query = 'select inv_id, inv_type, inv_cust_id, inv_amount, inv_error from stt.invoice',
     @Result = @insertCommand output;
