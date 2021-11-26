@@ -81,11 +81,14 @@ begin
 
 			declare @colLength int = (select CHARACTER_MAXIMUM_LENGTH from #cols where ORDINAL_POSITION = @idc);
 
-			set @rowData = @rowData + right('                                                                                         ' + @cell, @colLength);
-
 			if @idc < @cols
 			begin
+				set @rowData = @rowData + right('                                                                                         ' + @cell, @colLength);
 				set @rowData = @rowData + ', '
+			end
+			else
+			begin
+				set @rowData = @rowData + @cell;
 			end
 		end
 
