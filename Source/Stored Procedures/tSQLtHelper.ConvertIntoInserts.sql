@@ -7,6 +7,23 @@ create procedure tSQLtHelper.ConvertIntoInserts
 as
 begin
 	-- Prepare
+	SET NOCOUNT ON;
+
+	IF OBJECT_ID('tempdb..##rows') IS NOT NULL
+	BEGIN
+		DROP TABLE ##rows;
+	END
+
+	IF OBJECT_ID('tempdb..#rows') IS NOT NULL
+	BEGIN
+		DROP TABLE #rows;
+	END
+
+	IF OBJECT_ID('tempdb..#cols') IS NOT NULL
+	BEGIN
+		DROP TABLE #cols;
+	END
+
 	declare @command nvarchar(max) = 'select * into ##rows from (' + @Query + ') a';
 	exec sp_executesql @command;
 

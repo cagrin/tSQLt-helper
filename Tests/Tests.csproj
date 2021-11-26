@@ -4,6 +4,7 @@
         <SqlServerVersion>Sql150</SqlServerVersion>
         <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
         <!-- For additional properties that can be set here, please refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#model-properties -->
+        <Collation>Polish_CI_AS</Collation>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Source/Source.csproj" />

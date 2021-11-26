@@ -1,10 +1,12 @@
 create procedure testConvertIntoInserts.test1
 as
 begin
+    SET NOCOUNT ON;
 --- Arrange
+    delete from stt.invoice;
 	insert into stt.invoice (inv_id, inv_type, inv_cust_id, inv_amount, inv_error) values
     (1, 'FV', 'ABCDE12345', 100.00, NULL),
-    (2, 'FV1', 'Zazółć gęślą jaźn', -1.00, NULL),
+    (2, 'FV1', 'Zażółć gęślą jaźń', -1.00, NULL),
     (3, 'FV2', 'qwerty asdfgh zxcvb', 1234.56, '?'),
     (4, 'A', 'ABCDE12345', 0.00, 'An error occurred');
 
@@ -19,7 +21,7 @@ begin
 --- Assert
 	declare @expected nvarchar(max) = 'insert into stt.invoice (inv_id, inv_type, inv_cust_id, inv_amount, inv_error) values
     (1, ''FV '',          ''ABCDE12345'',  100.00,                NULL),
-    (2, ''FV1'',   ''Zazólc gesla jazn'',   -1.00,                NULL),
+    (2, ''FV1'',   ''Zażółć gęślą jaźń'',   -1.00,                NULL),
     (3, ''FV2'', ''qwerty asdfgh zxcvb'', 1234.56,                 ''?''),
     (4, ''A  '',          ''ABCDE12345'',    0.00, ''An error occurred'');';
 
@@ -28,8 +30,11 @@ begin
 
 	if not((@expected = @actual) or (@actual is null and @expected is null))
     begin
-        raiserror('testConvertIntoInserts.[test 1]', 16, 10);
+        raiserror('testConvertIntoInserts.test1 - failed!', 16, 10);
     end
-
+    else
+    begin
+        print 'testConvertIntoInserts.test1 - passed'
+    end
 end;
 go
