@@ -1,0 +1,10 @@
+<Project>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <SqlServerVersion>Sql150</SqlServerVersion>
+        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+        <Collation>Polish_CI_AS</Collation>
+        <!-- For additional properties that can be set here, please refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#model-properties -->
+        <!-- Refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#publishing-support for supported publishing options -->
+    </PropertyGroup>
+</Project>
