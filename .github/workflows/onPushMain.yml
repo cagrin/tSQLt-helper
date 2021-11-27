@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SA_PASSWORD: StrongP@ssw0rd!
+      DB_NAME: Tests
     timeout-minutes: 15
     services:
       sqlserver:
@@ -16,7 +19,7 @@ jobs:
         - 1433/tcp
         env:
           ACCEPT_EULA: Y
-          SA_PASSWORD: "StrongP@ssw0rd!"
+          SA_PASSWORD: "${{ env.SA_PASSWORD }}"
           MSSQL_COLLATION: Polish_CI_AS
     steps:
       - uses: actions/checkout@master
@@ -27,6 +30,6 @@ jobs:
       - name: Build tests
         run: dotnet build Tests
       - name: Publish tests
-        run: dotnet publish Tests /p:TargetDatabaseName=Tests /p:TargetUser=sa /p:TargetPassword=StrongP@ssw0rd! /p:TargetPort=${{ job.services.sqlserver.ports[1433] }}
+        run: dotnet publish Tests /p:TargetDatabaseName=${{ env.DB_NAME }} /p:TargetUser=sa /p:TargetPassword=${{ env.SA_PASSWORD }} /p:TargetPort=${{ job.services.sqlserver.ports[1433] }}
       - name: Run unit tests
-        run: sqlcmd -S localhost,${{ job.services.sqlserver.ports[1433] }} -d Tests -U sa -P StrongP@ssw0rd! -t 30 -Q "exec testConvertIntoInserts.test1"
+        run: sqlcmd -S localhost,${{ job.services.sqlserver.ports[1433] }} -d ${{ env.DB_NAME }} -U sa -P ${{ env.SA_PASSWORD }} -t 30 -Q "exec testConvertIntoInserts.test1"
