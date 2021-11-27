@@ -17,6 +17,7 @@ jobs:
         env:
           ACCEPT_EULA: Y
           SA_PASSWORD: "StrongP@ssw0rd!"
+          MSSQL_COLLATION: Polish_CI_AS
     steps:
       - uses: actions/checkout@master
       - name: Setup dotnet

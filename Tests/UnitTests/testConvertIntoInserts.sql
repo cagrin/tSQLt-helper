@@ -1,26 +1,27 @@
 create schema testConvertIntoInserts;
 go
 
-create schema stt;
-go
-create table stt.invoice
-(
-    inv_id int not null,
-    inv_type char(3) not null,
-    inv_cust_id varchar(100) null,
-    inv_amount money not null,
-    inv_date date null,
-    inv_error nvarchar(max) null
-);
-go
-
 create procedure testConvertIntoInserts.test1
 as
 begin
     SET NOCOUNT ON;
 --- Arrange
-    delete from stt.invoice;
-	insert into stt.invoice (inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error) values
+	IF OBJECT_ID('tempdb..#invoice') IS NOT NULL
+	BEGIN
+		DROP TABLE #invoice;
+	END
+
+    create table #invoice
+    (
+        inv_id int not null,
+        inv_type char(3) not null,
+        inv_cust_id varchar(100) null,
+        inv_amount money not null,
+        inv_date date null,
+        inv_error nvarchar(max) null
+    );
+
+	insert into #invoice (inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error) values
     (1, 'FV', 'ABCDE12345', 100.00, '2021-11-27', NULL),
     (2, 'FV1', 'Zażółć gęślą jaźń', -1.00, '2021-11-28', NULL),
     (3, 'FV2', 'qwerty asdfgh zxcvb', 1234.56, '2021-11-29', '?'),
@@ -30,12 +31,12 @@ begin
 	declare @Actual nvarchar(max);
 
 	exec tSQLtHelper.ConvertIntoInserts
-		@TableName = 'stt.invoice',
-		@Query = 'select inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error from stt.invoice',
+		@TableName = 'dbo.invoice',
+		@Query = 'select inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error from #invoice',
 		@Result = @Actual output;
 
 --- Assert
-	declare @expected nvarchar(max) = 'insert into stt.invoice (inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error) values
+	declare @expected nvarchar(max) = 'insert into dbo.invoice (inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error) values
     (1, ''FV '',          ''ABCDE12345'',  100.00, ''2021-11-27'', NULL),
     (2, ''FV1'',   ''Zażółć gęślą jaźń'',   -1.00, ''2021-11-28'', NULL),
     (3, ''FV2'', ''qwerty asdfgh zxcvb'', 1234.56, ''2021-11-29'', ''?''),
