@@ -5,6 +5,7 @@
         <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
         <!-- For additional properties that can be set here, please refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#model-properties -->
         <Collation>Polish_CI_AS</Collation>
+        <SuppressTSqlWarnings>71502,71562</SuppressTSqlWarnings>
     </PropertyGroup>
 
     <PropertyGroup>
