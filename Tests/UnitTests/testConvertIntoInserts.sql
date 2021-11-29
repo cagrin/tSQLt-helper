@@ -13,7 +13,7 @@ BEGIN
 
     CREATE TABLE #invoice
     (
-        inv_id int NOT NULL,
+        inv_id INT NOT NULL,
         inv_type CHAR(3) NOT NULL,
         inv_cust_id VARCHAR(100) NULL,
         inv_amount MONEY NOT NULL,
