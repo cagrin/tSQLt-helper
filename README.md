@@ -7,12 +7,12 @@ Procedure that converts "select query" into rows of inserts' command.
 
 Usage
 ```SQL
-declare @insertsCommand nvarchar(max);
+DECLARE @insertsCommand NVARCHAR(max);
 
-exec tSQLtHelper.ConvertIntoInserts
+EXEC tSQLtHelper.ConvertIntoInserts
     @TableName = 'stt.invoice',
-    @Query = 'select inv_id, inv_type, inv_cust_id, inv_amount, inv_error from stt.invoice',
-    @Result = @insertCommand output;
+    @Query = 'SELECT inv_id, inv_type, inv_cust_id, inv_amount, inv_error FROM stt.invoice',
+    @Result = @insertCommand OUTPUT;
 
-exec sys.sp_executesql @insertsCommand;
+EXEC sp_executesql @insertsCommand;
 ```

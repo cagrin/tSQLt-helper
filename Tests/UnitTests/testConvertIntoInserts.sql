@@ -1,9 +1,9 @@
-create schema testConvertIntoInserts;
-go
+CREATE SCHEMA testConvertIntoInserts;
+GO
 
-create procedure testConvertIntoInserts.test1
-as
-begin
+CREATE PROCEDURE testConvertIntoInserts.test1
+AS
+BEGIN
     SET NOCOUNT ON;
 --- Arrange
 	IF OBJECT_ID('tempdb..#invoice') IS NOT NULL
@@ -11,52 +11,52 @@ begin
 		DROP TABLE #invoice;
 	END
 
-    create table #invoice
+    CREATE TABLE #invoice
     (
-        inv_id int not null,
-        inv_type char(3) not null,
-        inv_cust_id varchar(100) null,
-        inv_amount money not null,
-        inv_date date null,
-        inv_error nvarchar(max) null
+        inv_id int NOT NULL,
+        inv_type CHAR(3) NOT NULL,
+        inv_cust_id VARCHAR(100) NULL,
+        inv_amount MONEY NOT NULL,
+        inv_date DATE NULL,
+        inv_error NVARCHAR(MAX) NULL
     );
 
-	insert into #invoice (inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error) values
+	INSERT INTO #invoice (inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error) VALUES
     (1, 'FV', 'ABCDE12345', 100.00, '2021-11-27', NULL),
     (2, 'FV1', 'Zażółć gęślą jaźń', -1.00, '2021-11-28', NULL),
     (3, 'FV2', 'qwerty asdfgh zxcvb', 1234.56, '2021-11-29', '?'),
-    (4, 'A', 'ABCDE12345', 0.00, NULL, 'An error occurred');
+    (4, 'A', 'ABCDE12345', 0.00, NULL, 'An ERROR occurred');
 
 --- Act
-	declare @Actual nvarchar(max);
+	DECLARE @Actual NVARCHAR(MAX);
 
-	exec tSQLtHelper.ConvertIntoInserts
+	EXEC tSQLtHelper.ConvertIntoInserts
 		@TableName = 'dbo.invoice',
-		@Query = 'select inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error from #invoice',
-		@Result = @Actual output;
+		@Query = 'SELECT inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error FROM #invoice',
+		@Result = @Actual OUTPUT;
 
 --- Assert
-	declare @expected nvarchar(max) = 'insert into dbo.invoice (inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error) values
+	DECLARE @expected NVARCHAR(MAX) = 'INSERT INTO dbo.invoice (inv_id, inv_type, inv_cust_id, inv_amount, inv_date, inv_error) VALUES
     (1, ''FV '',          ''ABCDE12345'',  100.00, ''2021-11-27'', NULL),
     (2, ''FV1'',   ''Zażółć gęślą jaźń'',   -1.00, ''2021-11-28'', NULL),
     (3, ''FV2'', ''qwerty asdfgh zxcvb'', 1234.56, ''2021-11-29'', ''?''),
-    (4, ''A  '',          ''ABCDE12345'',    0.00,         NULL, ''An error occurred'');';
+    (4, ''A  '',          ''ABCDE12345'',    0.00,         NULL, ''An ERROR occurred'');';
 
-    set @expected = replace(@expected, char(13) + char(10), char(10));
-    set @Actual = replace(@Actual, char(13) + char(10), char(10));
+    SET @expected = REPLACE(@expected, CHAR(13) + CHAR(10), CHAR(10));
+    SET @Actual = REPLACE(@Actual, CHAR(13) + CHAR(10), CHAR(10));
 
-	if not((@expected = @Actual) or (@Actual is null and @expected is null))
-    begin
+	IF NOT((@expected = @Actual) OR (@Actual IS NULL AND @expected IS NULL))
+    BEGIN
         DECLARE @Msg NVARCHAR(MAX) = CHAR(13)+CHAR(10)+
                   'Expected: ' + ISNULL('<'+@Expected+'>', 'NULL') +
                   CHAR(13)+CHAR(10)+
                   'but was : ' + ISNULL('<'+@Actual+'>', 'NULL');
         PRINT @Msg;
         RAISERROR('testConvertIntoInserts.test1 - failed!', 16, 10);
-    end
-    else
-    begin
-        print 'testConvertIntoInserts.test1 - passed'
-    end
-end;
-go
+    END
+    ELSE
+    BEGIN
+        PRINT 'testConvertIntoInserts.test1 - passed'
+    END
+END;
+GO

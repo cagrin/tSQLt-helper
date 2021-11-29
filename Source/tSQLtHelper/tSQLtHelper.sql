@@ -1,1 +1,1 @@
-create schema tSQLtHelper;
+CREATE SCHEMA tSQLtHelper;

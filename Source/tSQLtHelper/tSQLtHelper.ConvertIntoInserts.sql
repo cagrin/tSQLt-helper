@@ -1,11 +1,11 @@
-create procedure tSQLtHelper.ConvertIntoInserts
+CREATE PROCEDURE tSQLtHelper.ConvertIntoInserts
 (
-	@TableName nvarchar(max),
-	@Query nvarchar(max),
-	@Result nvarchar(max) output
+	@TableName NVARCHAR(MAX),
+	@Query NVARCHAR(MAX),
+	@Result NVARCHAR(MAX) OUTPUT
 )
-as
-begin
+AS
+BEGIN
 	-- Prepare
 	SET NOCOUNT ON;
 
@@ -24,88 +24,88 @@ begin
 		DROP TABLE #cols;
 	END
 
-	declare @command nvarchar(max) = 'select * into ##rows from (' + @Query + ') a';
-	exec sp_executesql @command;
+	DECLARE @command NVARCHAR(MAX) = 'SELECT * INTO ##rows FROM (' + @Query + ') a';
+	EXEC sp_executesql @command;
 
-	select * into #cols
-	from tempdb.INFORMATION_SCHEMA.COLUMNS
-	where TABLE_SCHEMA = 'dbo'
-	and TABLE_NAME = '##rows';
-	select RowNumber = row_number() over(order by (select 1)), * into #rows from ##rows;
+	SELECT * INTO #cols
+	FROM tempdb.INFORMATION_SCHEMA.COLUMNS
+	WHERE TABLE_SCHEMA = 'dbo'
+	AND TABLE_NAME = '##rows';
+	SELECT RowNumber = ROW_NUMBER() OVER(ORDER BY (SELECT 1)), * INTO #rows FROM ##rows;
 
-	declare @cols int = (select count(1) from #cols);
-	declare @rows int = (select count(1) from #rows);
+	DECLARE @cols INT = (SELECT COUNT(1) FROM #cols);
+	DECLARE @rows INT = (SELECT COUNT(1) FROM #rows);
 
-	--select * from #rowData
-	declare @columns nvarchar(max) = '';
-	declare @rowData nvarchar(max) = '';
-	declare @idx int = 0;
-	declare @idc int = 0;
-	declare @cell nvarchar(max) = '';
+	--select * FROM #rowData
+	DECLARE @columns NVARCHAR(MAX) = '';
+	DECLARE @rowData NVARCHAR(MAX) = '';
+	DECLARE @idx INT = 0;
+	DECLARE @idc INT = 0;
+	DECLARE @cell NVARCHAR(MAX) = '';
 
 	-- Columns
-	select @columns = ltrim(stuff((select ', ' + COLUMN_NAME from #cols for xml path('')), 1, 1,''));
-	update #cols set CHARACTER_MAXIMUM_LENGTH = 0;
+	SELECT @columns = LTRIM(STUFF((SELECT ', ' + COLUMN_NAME FROM #cols for XML PATH('')), 1, 1,''));
+	UPDATE #cols SET CHARACTER_MAXIMUM_LENGTH = 0;
 
 	-- RowData
-	set @idx = 0;
+	SET @idx = 0;
 	while @idx < @rows
-	begin
-		set @idx = @idx + 1;
-		set @idc = 0;
+	BEGIN
+		SET @idx = @idx + 1;
+		SET @idc = 0;
 		while @idc < @cols
-		begin
-			set @idc = @idc + 1;
-			set @cell = '';
-			exec tSQLtHelper.Private_FormatCell @idx, @idc, @cell output;
-			update #cols set CHARACTER_MAXIMUM_LENGTH = len(@cell)
-			where ORDINAL_POSITION = @idc and CHARACTER_MAXIMUM_LENGTH < len(@cell);
-		end
-	end
+		BEGIN
+			SET @idc = @idc + 1;
+			SET @cell = '';
+			EXEC tSQLtHelper.Private_FormatCell @idx, @idc, @cell OUTPUT;
+			UPDATE #cols SET CHARACTER_MAXIMUM_LENGTH = len(@cell)
+			WHERE ORDINAL_POSITION = @idc AND CHARACTER_MAXIMUM_LENGTH < len(@cell);
+		END
+	END
 
-	set @rowData = '';
-	set @idx = 0;
-	while @idx < @rows
-	begin
-		set @idx = @idx + 1;
+	SET @rowData = '';
+	SET @idx = 0;
+	WHILE @idx < @rows
+	BEGIN
+		SET @idx = @idx + 1;
 
-		set @rowData = @rowData + char(13) + char(10) + '    (';
+		SET @rowData = @rowData + CHAR(13) + CHAR(10) + '    (';
 
-		set @idc = 0;
-		while @idc < @cols
-		begin
-			set @idc = @idc + 1;
+		SET @idc = 0;
+		WHILE @idc < @cols
+		BEGIN
+			SET @idc = @idc + 1;
 
-			set @cell = '';
-			exec tSQLtHelper.Private_FormatCell @idx, @idc, @cell output;
+			SET @cell = '';
+			EXEC tSQLtHelper.Private_FormatCell @idx, @idc, @cell OUTPUT;
 
-			declare @colLength int = (select CHARACTER_MAXIMUM_LENGTH from #cols where ORDINAL_POSITION = @idc);
+			DECLARE @colLength INT = (SELECT CHARACTER_MAXIMUM_LENGTH FROM #cols WHERE ORDINAL_POSITION = @idc);
 
-			if @idc < @cols
-			begin
-				set @rowData = @rowData + right('                                                                                         ' + @cell, @colLength);
-				set @rowData = @rowData + ', '
-			end
-			else
-			begin
-				set @rowData = @rowData + @cell;
-			end
-		end
+			IF @idc < @cols
+			BEGIN
+				SET @rowData = @rowData + RIGHT('                                                                                         ' + @cell, @colLength);
+				SET @rowData = @rowData + ', '
+			END
+			ELSE
+			BEGIN
+				SET @rowData = @rowData + @cell;
+			END
+		END
 
-		if @idx < @rows
-		begin
-			set @rowData = @rowData + '),'
-		end
-		else
-		begin
-			set @rowData = @rowData + ');'
-		end
-	end
+		IF @idx < @rows
+		BEGIN
+			SET @rowData = @rowData + '),'
+		END
+		ELSE
+		BEGIN
+			SET @rowData = @rowData + ');'
+		END
+	END
 
-	set @Result = '';
-	set @Result = @Result + 'insert into ' + @TableName + ' ('
-	set @Result = @Result + @columns
-	set @Result = @Result + ') values';
-	set @Result = @Result + @rowData;
-end;
-go
+	SET @Result = '';
+	SET @Result = @Result + 'INSERT INTO ' + @TableName + ' ('
+	SET @Result = @Result + @columns
+	SET @Result = @Result + ') VALUES';
+	SET @Result = @Result + @rowData;
+END;
+GO
