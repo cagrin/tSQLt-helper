@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SA_PASSWORD: StrongP@ssw0rd!
-      DB_NAME: Tests
+      DB_NAME: tSQLtHelper
     timeout-minutes: 15
     services:
       sqlserver:
