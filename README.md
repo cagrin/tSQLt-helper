@@ -1,5 +1,5 @@
 # tSQLtHelper
-Helpers for tSQLt framework.
+tSQLtHelper is build with ```MSBuild.Sdk.SqlProj``` and .NET 6.
 
 ## ConvertIntoInserts
 
