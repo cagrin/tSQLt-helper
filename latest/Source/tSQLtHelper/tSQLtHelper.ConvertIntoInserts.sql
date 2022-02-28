@@ -69,7 +69,7 @@ BEGIN
 	BEGIN
 		SET @idx = @idx + 1;
 
-		SET @rowData = @rowData + CHAR(13) + CHAR(10) + '    (';
+		SET @rowData = @rowData + NCHAR(10) + '    (';
 
 		SET @idc = 0;
 		WHILE @idc < @cols

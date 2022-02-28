@@ -13,4 +13,4 @@ if ($retest -ne 1)
 
 $TEST_NAME='Tests'
 dotnet publish ./$TEST_NAME /p:TargetServerName=localhost /p:TargetPort=51433 /p:TargetDatabaseName=$TEST_NAME /p:TargetUser=sa /p:TargetPassword=$SA_PASSWORD
-Invoke-Sqlcmd -ServerInstance "localhost,51433" -Database "$TEST_NAME" -Username "sa" -Password "$SA_PASSWORD" -Query "EXEC testConvertIntoInserts.test1" -Verbose
+Invoke-Sqlcmd -ServerInstance "localhost,51433" -Database "$TEST_NAME" -Username "sa" -Password "$SA_PASSWORD" -Query "EXEC tSQLt.RunAll" -Verbose
