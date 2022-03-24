@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 15
     services:
       sqlserver:
-        image: mcr.microsoft.com/mssql/server:2019-latest
+        image: mcr.microsoft.com/azure-sql-edge
         ports:
         - 1433/tcp
         env:
