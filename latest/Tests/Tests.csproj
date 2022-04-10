@@ -1,11 +1,11 @@
 <Project Sdk="MSBuild.Sdk.SqlProj/2.0.0">
-    <PropertyGroup>
-        <CreateNewDatabase>True</CreateNewDatabase>
-    </PropertyGroup>
-    <ItemGroup>
-        <ProjectReference Include="../Source/Source.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="tSQLt.Edge" Version="0.6.0" />
-    </ItemGroup>
+	<PropertyGroup>
+		<CreateNewDatabase>True</CreateNewDatabase>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="../Source/Source.csproj"/>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="tSQLt.Edge" Version="0.7.0"/>
+	</ItemGroup>
 </Project>
