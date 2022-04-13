@@ -9,27 +9,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SA_PASSWORD: A.794613
-      DB_NAME: tSQLtHelper
-    timeout-minutes: 15
-    services:
-      sqlserver:
-        image: mcr.microsoft.com/azure-sql-edge
-        ports:
-        - 1433/tcp
-        env:
-          ACCEPT_EULA: Y
-          SA_PASSWORD: "${{ env.SA_PASSWORD }}"
-          MSSQL_COLLATION: Polish_CI_AS
+      IMAGE_NAME: mcr.microsoft.com/azure-sql-edge
     steps:
       - uses: actions/checkout@master
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@master
-        with:
-          dotnet-version: '6.0'
+      - name: Setup sqltest
+        run: dotnet tool install -g dotnet-sqltest
+      - name: Pull image
+        run: docker pull ${{ env.IMAGE_NAME }}
       - name: Build tests
         run: dotnet build latest/Tests
-      - name: Publish tests
-        run: dotnet publish latest/Tests /p:TargetDatabaseName=${{ env.DB_NAME }} /p:TargetUser=sa /p:TargetPassword=${{ env.SA_PASSWORD }} /p:TargetPort=${{ job.services.sqlserver.ports[1433] }}
-      - name: Run unit tests
-        run: sqlcmd -S localhost,${{ job.services.sqlserver.ports[1433] }} -d ${{ env.DB_NAME }} -U sa -P ${{ env.SA_PASSWORD }} -t 30 -Q "EXEC tSQLt.RunAll"
+      - name: Run tests
+        run: sqltest runall -p latest/Tests -i ${{ env.IMAGE_NAME }}
