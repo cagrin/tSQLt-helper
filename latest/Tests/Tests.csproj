@@ -6,6 +6,6 @@
 		<ProjectReference Include="../Source/Source.csproj"/>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="tSQLt.Edge" Version="0.7.3"/>
+		<PackageReference Include="tSQLt.Edge" Version="0.7.4"/>
 	</ItemGroup>
 </Project>
