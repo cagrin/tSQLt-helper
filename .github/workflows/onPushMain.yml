@@ -19,4 +19,4 @@ jobs:
       - name: Build tests
         run: dotnet build latest/Tests
       - name: Run tests
-        run: sqltest runall -p latest/Tests -i ${{ env.IMAGE_NAME }}
+        run: sqltest runall -p latest/Tests -i ${{ env.IMAGE_NAME }} -c Polish_CI_AS
